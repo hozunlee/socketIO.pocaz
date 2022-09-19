@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import queryString from "query-string";
 import io from "socket.io-client";
+import dayjs from "dayjs";
 
 import InfoBar from "./InfoBar";
 import Input from "./Input";
@@ -18,6 +19,8 @@ const Chat = () => {
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([]);
     const location = useLocation();
+
+    const thisTime = dayjs().format("HH:mm");
 
     useEffect(() => {
         const { name, room } = queryString.parse(location.search);
@@ -47,7 +50,9 @@ const Chat = () => {
     const sendMessage = (event) => {
         event.preventDefault();
         if (message) {
-            socket.emit("sendMessage", message, () => setMessage(""));
+            socket.emit("sendMessage", { message, thisTime }, () =>
+                setMessage("")
+            );
         }
     };
 

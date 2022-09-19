@@ -18,11 +18,6 @@ const io = socketio(server, {
     },
 });
 
-app.use(
-    cors({
-        origin: ["*"], // 모든 출처 허용 옵션. true 를 써도 된다.
-    })
-);
 app.use(router);
 
 io.on("connection", (socket) => {
@@ -34,7 +29,7 @@ io.on("connection", (socket) => {
 
         socket.emit("message", {
             user: "admin",
-            text: `${user.name}, ${user.room}에 오신것을 환영합니다.`,
+            text: `${user?.name}, ${user?.room}에 오신것을 환영합니다.`,
         });
         socket.broadcast.to(user.room).emit("message", {
             user: "admin",
@@ -44,19 +39,23 @@ io.on("connection", (socket) => {
         callback();
     });
 
-    socket.on("sendMessage", (message, callback) => {
+    socket.on("sendMessage", ({ message, thisTime }, callback) => {
         const user = getUser(socket.id);
+        // console.log("thisTime :>> ", thisTime);
         // console.log("socket.id ===>", socket.id);
         // console.log("user ===>", user);
         // console.log("message :>> ", message);
-        io.to(user.room).emit("message", { user: user.name, text: message });
+        io.to(user.room).emit("message", {
+            user: user.name,
+            text: message,
+            timeStamp: thisTime,
+        });
         callback();
     });
 
     socket.on("disconnect", () => {
         const user = removeUser(socket.id);
-        console.log("socket.id :>> ", socket.id);
-        console.log("🚀 ~ file: index.js ~ line 53 ~ socket.on ~ user", user);
+        // console.log("socket.id :>> ", socket.id);
 
         if (user) {
             io.to(user.room).emit("message", {
@@ -69,7 +68,7 @@ io.on("connection", (socket) => {
             });
             console.log("나감메세지 보냄");
         }
-        console.log("유저가 떠났어요.");
+        // console.log("유저가 떠났어요.");
     });
 });
 

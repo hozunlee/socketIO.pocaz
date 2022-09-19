@@ -2,7 +2,9 @@ import React from "react";
 
 import ReactEmoji from "react-emoji";
 
-const Msg = ({ message: { text, user }, name }) => {
+const Msg = ({ message: { text, user, timeStamp }, name }) => {
+    //TODO TimeStamp 추가
+    console.log("timeStamp :>> ", timeStamp);
     const trimmedName = name.trim().toLowerCase();
 
     let isSentByCurrentUser = false;
@@ -10,9 +12,12 @@ const Msg = ({ message: { text, user }, name }) => {
 
     return isSentByCurrentUser ? (
         <div className="messageContainer flex justify-end py-3 mt-1">
-            <p className="sentText flex items-center text-gray-400 tracking-tight">
-                {trimmedName}
-            </p>
+            <div>
+                <p className="sentText flex items-center text-gray-400 tracking-tight">
+                    {trimmedName}
+                </p>
+                <p>{timeStamp}</p>
+            </div>
             <div className="messageBox bg-blue-700 rounded-3xl px-2 py-5 inline-block text-white max-w-fit">
                 <p className="messageText colorWhite w-full letter tracking-normal float-left text-lg ">
                     {ReactEmoji.emojify(text)}
@@ -31,6 +36,7 @@ const Msg = ({ message: { text, user }, name }) => {
             <p className="sentText  flex items-center text-gray-400 tracking-tight pl-2 ">
                 {user}
             </p>
+            <p>{timeStamp}</p>
         </div>
     );
 };
